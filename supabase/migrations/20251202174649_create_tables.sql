@@ -20,7 +20,7 @@ CREATE POLICY "Allow select for all users" ON images
     USING (true);
 
 INSERT INTO storage.buckets (id, name, public)
-VALUES ('images', 'images', false);
+VALUES ('images', 'images', true);
 
 CREATE POLICY "Public read access"
 ON storage.objects FOR SELECT

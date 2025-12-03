@@ -33,7 +33,7 @@ async function saveBase64Image(base64: string, outputPath: string) {
   }
 
   const resultDb = await client.from("images").insert({
-    file_path: resultStorage.data.fullPath,
+    file_path: resultStorage.data.path,
     type: "cours",
     matiere: "Biochimie",
     subject: "Structure des protéines",
