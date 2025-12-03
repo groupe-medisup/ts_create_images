@@ -1,40 +1,86 @@
 import { readFile, writeFile } from "fs/promises";
 import { getPrompt } from "./prompt";
+import { createClient } from "@supabase/supabase-js";
+import { Database } from "../supabase/database.types";
+
+const client = createClient<Database>(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 function cleanString(input: string) {
   return input.replace(/\s+/g, "_").toLowerCase();
 }
 
-function saveBase64Image(base64: string, outputPath: string) {
+async function saveBase64Image(base64: string, outputPath: string) {
   const matches = base64.match(/^data:image\/png;base64,(.+)$/);
   const base64Data = matches ? matches[1] : base64;
   const buffer = Buffer.from(base64Data, "base64");
-  return writeFile(outputPath, new Uint8Array(buffer));
+  // await writeFile(outputPath, new Uint8Array(buffer));
+
+  // console.log(`Image saved to ${outputPath}`);
+
+  const resultStorage = await client.storage
+    .from("images")
+    .upload("test.png", buffer, {
+      contentType: "image/png",
+    });
+
+  console.log("Upload result:", resultStorage);
+
+  if (resultStorage.error) {
+    throw resultStorage.error;
+  }
+
+  const resultDb = await client.from("images").insert({
+    file_path: resultStorage.data.fullPath,
+    type: "cours",
+    matiere: "Biochimie",
+    subject: "Structure des protéines",
+    generated_by_model: "toto",
+  });
+
+  console.log("DB insert result:", resultDb);
+
+  if (resultDb.error) {
+    throw resultDb.error;
+  }
 }
 
 async function main() {
-  const data = await readFile("input/data.txt", "utf-8");
-  const lines = data.split("\n").filter((line) => line.trim() !== "");
+  const fileData = await readFile("input/generated_image.png", "base64");
+  await saveBase64Image(fileData, "output/generated_image.png");
 
-  const courseData = lines.map((line) => {
-    const [matiere, sousTheme] = line.split("||").map((part) => part.trim());
-    return { matiere, sousTheme };
-  });
+  // const data = await readFile("input/test_data.txt", "utf-8");
+  // const lines = data.split("\n").filter((line) => line.trim() !== "");
 
-  for (const { matiere, sousTheme } of courseData) {
-    console.log(`Generating Cours image for ${matiere} - ${sousTheme}`);
-    // await generateImage({ matiere, sousTheme, type: "Cours" });
-  }
+  // // Get only the first line for testing
+  // const courseData = [
+  //   lines.map((line) => {
+  //     const [matiere, sousTheme] = line.split("||").map((part) => part.trim());
+  //     return { matiere, sousTheme };
+  //   })[0],
+  // ];
 
-  const examData = [...new Set(courseData.map(({ matiere }) => matiere))];
+  // // const courseData = lines.map((line) => {
+  // //   const [matiere, sousTheme] = line.split("||").map((part) => part.trim());
+  // //   return { matiere, sousTheme };
+  // // });
 
-  for (const matiere of examData) {
-    console.log(`Generating Colle image for ${matiere}`);
-    // await generateImage({ matiere, type: "Colle" });
+  // for (const { matiere, sousTheme } of courseData) {
+  //   console.log(`Generating Cours image for ${matiere} - ${sousTheme}`);
+  //   // await generateImage({ matiere, sousTheme, type: "Cours" });
+  // }
 
-    console.log(`Generating EBC image for ${matiere}`);
-    // await generateImage({ matiere, type: "EBC" });
-  }
+  // const examData = [...new Set(courseData.map(({ matiere }) => matiere))];
+
+  // for (const matiere of examData) {
+  //   console.log(`Generating Colle image for ${matiere}`);
+  //   // await generateImage({ matiere, type: "Colle" });
+
+  //   console.log(`Generating EBC image for ${matiere}`);
+  //   // await generateImage({ matiere, type: "EBC" });
+  // }
 }
 
 // async function generateImage({
@@ -102,7 +148,7 @@ async function main() {
 
 //       await writeFile(`${imageName}.txt`, imageUrl);
 
-//       saveBase64Image(imageUrl, `${imageName}.png`);
+//       await saveBase64Image(imageUrl, `${imageName}.png`);
 
 //       console.log(`Image saved as ${imageName}`);
 //     }
