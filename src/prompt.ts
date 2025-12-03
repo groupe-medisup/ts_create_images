@@ -1,21 +1,25 @@
+import { Database } from "../supabase/database.types";
+
+export type ImageType = Database["public"]["Enums"]["image_type"];
+
 export function getPrompt({
   matiere,
   type,
-  sousTheme = "",
+  subject = "",
 }: {
   matiere: string;
-  sousTheme?: string;
-  type: "Cours" | "Colle" | "EBC";
+  subject?: string;
+  type: ImageType;
 }) {
-  const moodAndLighting = {
-    Cours: "calm, bright, pedagogical, clear and harmonious",
-    Colle:
+  const moodAndLighting: Record<ImageType, string> = {
+    cours: "calm, bright, pedagogical, clear and harmonious",
+    colle:
       "dynamic and focused, light tension, stronger contrasts, slight reflections, symbolizing knowledge testing",
     EBC: "solemn and competitive atmosphere, cool lighting, subtle metallic reflections, and abstract scientific elements like grids, curves, or data holograms symbolizing evaluation and ranking",
   };
 
   const color =
-    type === "Cours"
+    type === "cours"
       ? "soft blues, greens, and neutral tones for a calm and educational feel"
       : "dark academic tones, silver highlights, central glow or subtle halo";
 
@@ -23,7 +27,7 @@ export function getPrompt({
     throw new Error("Invalid type or matiere");
   }
 
-  return `Create an image of a highly detailed, photorealistic 3D render illustrating a medical concept from ${matiere} ${sousTheme}. 
+  return `Create an image of a highly detailed, photorealistic 3D render illustrating a medical concept from ${matiere} ${subject}. 
 No text, no logos, no human faces. The image must be scientifically and medically accurate — every anatomical, biological, or chemical structure should respect real medical observation standards from a medical school context.
  
 Artistic style inspired by Pixar, Blender, and Unreal Engine — cinematic composition, realistic materials, soft depth of field, natural lighting (warm or cold depending on the subject). 
