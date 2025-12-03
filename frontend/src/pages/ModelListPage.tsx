@@ -2,44 +2,40 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
-export function MatierePage() {
-  const [matieres, setMatieres] = useState<string[]>([]);
+export function ModelListPage() {
+  const [models, setModels] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchMatieres() {
+    async function fetchModels() {
       const { data, error } = await supabase
         .from('images')
-        .select('matiere');
+        .select('generated_by_model');
 
       if (error) {
-        console.error('Error fetching matieres:', error);
+        console.error('Error fetching models:', error);
         return;
       }
 
-      const uniqueMatieres = [...new Set(data.map(d => d.matiere))];
-      setMatieres(uniqueMatieres);
+      const uniqueModels = [...new Set(data.map(d => d.generated_by_model))];
+      setModels(uniqueModels);
       setLoading(false);
     }
 
-    fetchMatieres();
+    fetchModels();
   }, []);
 
   if (loading) return <div>Loading...</div>;
 
   return (
     <div style={{ padding: '20px' }}>
-      <div style={{ marginBottom: '20px' }}>
-        <Link to="/models" style={{ padding: '10px 20px', background: '#007bff', color: '#fff', borderRadius: '4px', textDecoration: 'none' }}>
-          View by Models
-        </Link>
-      </div>
-      <h1>Matières</h1>
+      <Link to="/" style={{ marginBottom: '20px', display: 'inline-block' }}>← Back to Matières</Link>
+      <h1>Models</h1>
       <ul style={{ listStyle: 'none', padding: 0 }}>
-        {matieres.map(matiere => (
-          <li key={matiere} style={{ marginBottom: '10px' }}>
+        {models.map(model => (
+          <li key={model} style={{ marginBottom: '10px' }}>
             <Link
-              to={`/matiere/${encodeURIComponent(matiere)}`}
+              to={`/model/${encodeURIComponent(model)}`}
               style={{
                 display: 'block',
                 padding: '15px',
@@ -49,7 +45,7 @@ export function MatierePage() {
                 color: '#333'
               }}
             >
-              {matiere}
+              {model}
             </Link>
           </li>
         ))}
