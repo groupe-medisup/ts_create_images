@@ -29,7 +29,10 @@ export function MatierePage() {
 
   return (
     <div style={{ padding: '20px' }}>
-      <div style={{ marginBottom: '20px' }}>
+      <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+        <Link to="/all" style={{ padding: '10px 20px', background: '#28a745', color: '#fff', borderRadius: '4px', textDecoration: 'none' }}>
+          All Images
+        </Link>
         <Link to="/models" style={{ padding: '10px 20px', background: '#007bff', color: '#fff', borderRadius: '4px', textDecoration: 'none' }}>
           View by Models
         </Link>
