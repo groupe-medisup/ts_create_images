@@ -35,17 +35,6 @@ export function ImageCard({
 
     setDeleting(true);
 
-    const { error: storageError } = await supabase.storage
-      .from("images")
-      .remove([file_path]);
-
-    if (storageError) {
-      console.error("Error deleting from storage:", storageError);
-      alert("Failed to delete image from storage");
-      setDeleting(false);
-      return;
-    }
-
     const { error: dbError } = await supabase.rpc("refuse_image", {
       image_id: id,
     });
