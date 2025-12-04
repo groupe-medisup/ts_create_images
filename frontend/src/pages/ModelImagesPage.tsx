@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { ImageCard } from '../components/ImageCard';
 
 type Image = {
   id: string;
@@ -9,6 +10,7 @@ type Image = {
   type: string;
   matiere: string;
   subject: string;
+  generated_by_model: string;
 };
 
 export function ModelImagesPage() {
@@ -22,7 +24,7 @@ export function ModelImagesPage() {
 
       const { data, error } = await supabase
         .from('images')
-        .select('id, file_path, created_at, type, matiere, subject')
+        .select('*')
         .eq('generated_by_model', model);
 
       if (error) {
@@ -39,11 +41,6 @@ export function ModelImagesPage() {
     }
   }, [model]);
 
-  const getImageUrl = (filePath: string) => {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    return `${supabaseUrl}/storage/v1/object/public/images/${filePath}`;
-  };
-
   if (loading) return <div>Loading...</div>;
 
   return (
@@ -57,28 +54,7 @@ export function ModelImagesPage() {
         marginTop: '20px'
       }}>
         {images.map(image => (
-          <div key={image.id} style={{
-            border: '1px solid #ddd',
-            borderRadius: '8px',
-            padding: '10px',
-            background: '#fff'
-          }}>
-            <img
-              src={getImageUrl(image.file_path)}
-              alt={`${image.matiere} - ${image.subject}`}
-              style={{
-                width: '100%',
-                height: 'auto',
-                borderRadius: '4px'
-              }}
-            />
-            <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
-              <div>Matière: {image.matiere}</div>
-              <div>Subject: {image.subject}</div>
-              <div>Type: {image.type}</div>
-              <div>Date: {new Date(image.created_at).toLocaleDateString()}</div>
-            </div>
-          </div>
+          <ImageCard key={image.id} {...image} />
         ))}
       </div>
     </div>
