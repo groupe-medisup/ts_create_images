@@ -8,7 +8,7 @@ type ImageListProps = {
   deleteImage: (id: string) => void;
 };
 
-export function ImageList({ images, deleteImage }: ImageListProps) {
+function ImageSubList({ images, deleteImage }: ImageListProps) {
   return (
     <div
       style={{
@@ -25,6 +25,42 @@ export function ImageList({ images, deleteImage }: ImageListProps) {
           onDelete={() => deleteImage(image.id)}
         />
       ))}
+    </div>
+  );
+}
+
+export function ImageList({ images, deleteImage }: ImageListProps) {
+  return (
+    <div>
+      {images.filter((image) => image.type === "cours").length > 0 && (
+        <>
+          <h2>Cours</h2>
+          <ImageSubList
+            images={images.filter((image) => image.type === "cours")}
+            deleteImage={deleteImage}
+          />
+        </>
+      )}
+
+      {images.filter((image) => image.type === "colle").length > 0 && (
+        <>
+          <h2>Colles</h2>
+          <ImageSubList
+            images={images.filter((image) => image.type === "colle")}
+            deleteImage={deleteImage}
+          />
+        </>
+      )}
+
+      {images.filter((image) => image.type === "EBC").length > 0 && (
+        <>
+          <h2>EBC</h2>
+          <ImageSubList
+            images={images.filter((image) => image.type === "EBC")}
+            deleteImage={deleteImage}
+          />
+        </>
+      )}
     </div>
   );
 }

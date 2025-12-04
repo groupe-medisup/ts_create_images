@@ -87,20 +87,20 @@ async function main() {
   });
 
   for (const model of models) {
-    for (const { matiere, subject } of courseData) {
-      console.log(`Generating Cours image for ${matiere} - ${subject}`);
-      await generateImage({ matiere, subject, type: "cours", model });
-    }
-
-    // const examData = [...new Set(courseData.map(({ matiere }) => matiere))];
-
-    // for (const matiere of examData) {
-    //   console.log(`Generating Colle image for ${matiere}`);
-    //   await generateImage({ matiere, type: "colle" });
-
-    //   console.log(`Generating EBC image for ${matiere}`);
-    //   await generateImage({ matiere, type: "EBC" });
+    // for (const { matiere, subject } of courseData) {
+    //   console.log(`Generating Cours image for ${matiere} - ${subject}`);
+    //   await generateImage({ matiere, subject, type: "cours", model });
     // }
+
+    const examData = [...new Set(courseData.map(({ matiere }) => matiere))];
+
+    for (const matiere of examData) {
+      console.log(`Generating Colle image for ${matiere}`);
+      await generateImage({ matiere, type: "colle", model });
+
+      console.log(`Generating EBC image for ${matiere}`);
+      await generateImage({ matiere, type: "EBC", model });
+    }
   }
 }
 
