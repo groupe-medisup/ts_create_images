@@ -22,7 +22,6 @@ const getImageUrl = (filePath: string) => {
 export function ImageCard({
   id,
   file_path,
-  created_at,
   type,
   matiere,
   subject,
@@ -69,6 +68,9 @@ export function ImageCard({
         padding: "10px",
         background: "#fff",
         opacity: deleting ? 0.5 : 1,
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
       }}
     >
       <img
@@ -82,7 +84,7 @@ export function ImageCard({
       />
       <div style={{ marginTop: "10px", fontSize: "12px", color: "#666" }}>
         <div>
-          Matière:{" "}
+          Matière:
           <Link
             to={`/matiere/${encodeURIComponent(matiere)}`}
             style={{ color: "#007bff", textDecoration: "underline" }}
@@ -102,7 +104,6 @@ export function ImageCard({
           </Link>
         </div>
         <div>Type: {type}</div>
-        <div>Date: {new Date(created_at).toLocaleDateString()}</div>
         <div>
           Model:
           <Link
@@ -117,7 +118,7 @@ export function ImageCard({
         onClick={handleDelete}
         disabled={deleting}
         style={{
-          marginTop: "10px",
+          marginTop: "auto",
           width: "100%",
           padding: "8px",
           background: "#dc3545",
