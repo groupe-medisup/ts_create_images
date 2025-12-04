@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
-import { ImageCard } from '../components/ImageCard';
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { supabase } from "../lib/supabase";
+import { ImageCard } from "../components/ImageCard";
 
 type Image = {
   id: string;
@@ -14,29 +14,36 @@ type Image = {
 };
 
 export function ImageGalleryPage() {
-  const { matiere, subject } = useParams<{ matiere: string; subject: string }>();
+  const { matiere, subject } = useParams<{
+    matiere: string;
+    subject: string;
+  }>();
   const [images, setImages] = useState<Image[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchImages() {
-      if(!matiere || !subject) return;
+  const deleteImage = (id: string) => {
+    setImages((prevImages) => prevImages.filter((image) => image.id !== id));
+  };
 
-      const { data, error } = await supabase
-        .from('images')
-        .select('*')
-        .eq('matiere', matiere)
-        .eq('subject', subject);
+  const fetchImages = async () => {
+    if (!matiere || !subject) return;
 
-      if (error) {
-        console.error('Error fetching images:', error);
-        return;
-      }
+    const { data, error } = await supabase
+      .from("images")
+      .select("*")
+      .eq("matiere", matiere)
+      .eq("subject", subject);
 
-      setImages(data);
-      setLoading(false);
+    if (error) {
+      console.error("Error fetching images:", error);
+      return;
     }
 
+    setImages(data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
     if (matiere && subject) {
       fetchImages();
     }
@@ -45,18 +52,29 @@ export function ImageGalleryPage() {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div style={{ padding: '20px' }}>
-      <Link to={`/matiere/${encodeURIComponent(matiere!)}`} style={{ marginBottom: '20px', display: 'inline-block' }}>← Back</Link>
+    <div style={{ padding: "20px" }}>
+      <Link
+        to={`/matiere/${encodeURIComponent(matiere!)}`}
+        style={{ marginBottom: "20px", display: "inline-block" }}
+      >
+        ← Back
+      </Link>
       <h1>{matiere}</h1>
       <h2>{subject}</h2>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-        gap: '20px',
-        marginTop: '20px'
-      }}>
-        {images.map(image => (
-          <ImageCard key={image.id} {...image} />
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+          gap: "20px",
+          marginTop: "20px",
+        }}
+      >
+        {images.map((image) => (
+          <ImageCard
+            key={image.id}
+            {...image}
+            onDelete={() => deleteImage(image.id)}
+          />
         ))}
       </div>
     </div>

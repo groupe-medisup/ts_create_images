@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
-import { ImageCard } from '../components/ImageCard';
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { supabase } from "../lib/supabase";
+import { ImageCard } from "../components/ImageCard";
 
 type Image = {
   id: string;
@@ -18,24 +18,28 @@ export function ModelImagesPage() {
   const [images, setImages] = useState<Image[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchImages() {
-      if(!model) return;
+  const deleteImage = (id: string) => {
+    setImages((prevImages) => prevImages.filter((image) => image.id !== id));
+  };
 
-      const { data, error } = await supabase
-        .from('images')
-        .select('*')
-        .eq('generated_by_model', model);
+  const fetchImages = async () => {
+    if (!model) return;
 
-      if (error) {
-        console.error('Error fetching images:', error);
-        return;
-      }
+    const { data, error } = await supabase
+      .from("images")
+      .select("*")
+      .eq("generated_by_model", model);
 
-      setImages(data);
-      setLoading(false);
+    if (error) {
+      console.error("Error fetching images:", error);
+      return;
     }
 
+    setImages(data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
     if (model) {
       fetchImages();
     }
@@ -44,17 +48,28 @@ export function ModelImagesPage() {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div style={{ padding: '20px' }}>
-      <Link to="/models" style={{ marginBottom: '20px', display: 'inline-block' }}>← Back</Link>
+    <div style={{ padding: "20px" }}>
+      <Link
+        to="/models"
+        style={{ marginBottom: "20px", display: "inline-block" }}
+      >
+        ← Back
+      </Link>
       <h1>{model}</h1>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-        gap: '20px',
-        marginTop: '20px'
-      }}>
-        {images.map(image => (
-          <ImageCard key={image.id} {...image} />
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+          gap: "20px",
+          marginTop: "20px",
+        }}
+      >
+        {images.map((image) => (
+          <ImageCard
+            key={image.id}
+            {...image}
+            onDelete={() => deleteImage(image.id)}
+          />
         ))}
       </div>
     </div>

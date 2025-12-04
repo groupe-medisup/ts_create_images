@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import { useState } from "react";
+import { supabase } from "../lib/supabase";
 
 type ImageCardProps = {
   id: string;
@@ -8,43 +10,126 @@ type ImageCardProps = {
   matiere: string;
   subject: string;
   generated_by_model: string;
+  onDelete: () => void;
 };
 
-export function ImageCard({ file_path, created_at, type, matiere, subject, generated_by_model }: ImageCardProps) {
-  const getImageUrl = (filePath: string) => {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    return `${supabaseUrl}/storage/v1/object/public/images/${filePath}`;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+
+const getImageUrl = (filePath: string) => {
+  return `${supabaseUrl}/storage/v1/object/public/images/${filePath}`;
+};
+
+export function ImageCard({
+  id,
+  file_path,
+  created_at,
+  type,
+  matiere,
+  subject,
+  generated_by_model,
+  onDelete,
+}: ImageCardProps) {
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!confirm("Delete this image?")) return;
+
+    setDeleting(true);
+
+    const { error: storageError } = await supabase.storage
+      .from("images")
+      .remove([file_path]);
+
+    if (storageError) {
+      console.error("Error deleting from storage:", storageError);
+      alert("Failed to delete image from storage");
+      setDeleting(false);
+      return;
+    }
+
+    const { error: dbError } = await supabase
+      .from("images")
+      .delete()
+      .eq("id", id);
+
+    if (dbError) {
+      console.error("Error deleting from database:", dbError);
+      alert("Failed to delete image from database");
+      setDeleting(false);
+      return;
+    }
+
+    onDelete();
   };
 
   return (
-    <div style={{
-      border: '1px solid #ddd',
-      borderRadius: '8px',
-      padding: '10px',
-      background: '#fff'
-    }}>
+    <div
+      style={{
+        border: "1px solid #ddd",
+        borderRadius: "8px",
+        padding: "10px",
+        background: "#fff",
+        opacity: deleting ? 0.5 : 1,
+      }}
+    >
       <img
         src={getImageUrl(file_path)}
         alt={`${matiere} - ${subject}`}
         style={{
-          width: '100%',
-          height: 'auto',
-          borderRadius: '4px'
+          width: "100%",
+          height: "auto",
+          borderRadius: "4px",
         }}
       />
-      <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+      <div style={{ marginTop: "10px", fontSize: "12px", color: "#666" }}>
         <div>
-          Matière: <Link to={`/matiere/${encodeURIComponent(matiere)}`} style={{ color: '#007bff', textDecoration: 'underline' }}>{matiere}</Link>
+          Matière:{" "}
+          <Link
+            to={`/matiere/${encodeURIComponent(matiere)}`}
+            style={{ color: "#007bff", textDecoration: "underline" }}
+          >
+            {matiere}
+          </Link>
         </div>
         <div>
-          Subject: <Link to={`/matiere/${encodeURIComponent(matiere)}/subject/${encodeURIComponent(subject)}`} style={{ color: '#007bff', textDecoration: 'underline' }}>{subject}</Link>
+          Subject:
+          <Link
+            to={`/matiere/${encodeURIComponent(
+              matiere
+            )}/subject/${encodeURIComponent(subject)}`}
+            style={{ color: "#007bff", textDecoration: "underline" }}
+          >
+            {subject}
+          </Link>
         </div>
         <div>Type: {type}</div>
         <div>Date: {new Date(created_at).toLocaleDateString()}</div>
         <div>
-          Model: <Link to={`/model/${encodeURIComponent(generated_by_model)}`} style={{ color: '#007bff', textDecoration: 'underline' }}>{generated_by_model}</Link>
+          Model:
+          <Link
+            to={`/model/${encodeURIComponent(generated_by_model)}`}
+            style={{ color: "#007bff", textDecoration: "underline" }}
+          >
+            {generated_by_model}
+          </Link>
         </div>
       </div>
+      <button
+        onClick={handleDelete}
+        disabled={deleting}
+        style={{
+          marginTop: "10px",
+          width: "100%",
+          padding: "8px",
+          background: "#dc3545",
+          color: "#fff",
+          border: "none",
+          borderRadius: "4px",
+          cursor: deleting ? "not-allowed" : "pointer",
+        }}
+      >
+        {deleting ? "Deleting..." : "Delete"}
+      </button>
     </div>
   );
 }
