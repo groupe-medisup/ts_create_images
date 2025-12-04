@@ -41,6 +41,7 @@ export type Database = {
           generated_by_model: string
           id: string
           matiere: string
+          refused_at: string | null
           subject: string
           type: Database["public"]["Enums"]["image_type"]
         }
@@ -50,6 +51,7 @@ export type Database = {
           generated_by_model: string
           id?: string
           matiere: string
+          refused_at?: string | null
           subject?: string
           type: Database["public"]["Enums"]["image_type"]
         }
@@ -59,6 +61,7 @@ export type Database = {
           generated_by_model?: string
           id?: string
           matiere?: string
+          refused_at?: string | null
           subject?: string
           type?: Database["public"]["Enums"]["image_type"]
         }
@@ -69,7 +72,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      refuse_image: { Args: { image_id: string }; Returns: undefined }
     }
     Enums: {
       image_type: "cours" | "EBC" | "colle"

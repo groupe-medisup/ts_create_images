@@ -47,10 +47,9 @@ export function ImageCard({
       return;
     }
 
-    const { error: dbError } = await supabase
-      .from("images")
-      .delete()
-      .eq("id", id);
+    const { error: dbError } = await supabase.rpc("refuse_image", {
+      image_id: id,
+    });
 
     if (dbError) {
       console.error("Error deleting from database:", dbError);

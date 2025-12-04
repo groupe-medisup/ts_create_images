@@ -28,7 +28,8 @@ export function ModelImagesPage() {
     const { data, error } = await supabase
       .from("images")
       .select("*")
-      .eq("generated_by_model", model);
+      .eq("generated_by_model", model)
+      .is("refused_at", null);
 
     if (error) {
       console.error("Error fetching images:", error);

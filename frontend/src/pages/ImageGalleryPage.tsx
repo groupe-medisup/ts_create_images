@@ -32,7 +32,8 @@ export function ImageGalleryPage() {
       .from("images")
       .select("*")
       .eq("matiere", matiere)
-      .eq("subject", subject);
+      .eq("subject", subject)
+      .is("refused_at", null);
 
     if (error) {
       console.error("Error fetching images:", error);
