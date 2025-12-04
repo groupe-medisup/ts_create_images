@@ -28,15 +28,20 @@ async function saveImage({
   matiere: string;
   subject: string;
 }) {
-  const matches = base64.match(/^data:image\/png;base64,(.+)$/);
-  const base64Data = matches ? matches[1] : base64;
-  const buffer = Buffer.from(base64Data, "base64");
-  // await writeFile(outputPath, new Uint8Array(buffer));
-  // console.log(`Image saved to ${outputPath}`);
+  const base64Data = base64.startsWith("data:") ? base64.split(",")[1] : base64;
+  const buffer = Buffer.from(base64Data.trim(), "base64");
 
   const imageName = `${model}/${type}_${cleanString(matiere)}_${cleanString(
     subject
   )}-${Date.now()}`;
+
+  // const outputPath = `output/${imageName}.png`;
+  // await writeFile(outputPath, new Uint8Array(buffer));
+  // console.log(`Image saved to ${outputPath}`);
+
+  // const txtOutputPath = `output/${imageName}.txt`;
+  // await writeFile(txtOutputPath, base64);
+  // console.log(`Base64 data saved to ${txtOutputPath}\n\n`);
 
   const resultStorage = await client.storage
     .from("images")
@@ -136,7 +141,10 @@ async function generateImage({
     );
     const result = await response.json();
 
-    // console.dir(result, { depth: null });
+    // const path = `${model}/${type}_${cleanString(matiere)}_${cleanString(
+    //   subject
+    // )}-${Date.now()}.json`;
+    // await writeFile(`output/${path}`, JSON.stringify(result, null, 2));
 
     if (!result.choices) {
       throw new Error("🚨 No choices in response");
