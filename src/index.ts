@@ -76,7 +76,7 @@ async function main() {
 
   const models = [
     "black-forest-labs/flux.2-pro",
-    "openai/gpt-5-image",
+    // "openai/gpt-5-image", // only creates square images
     "google/gemini-3-pro-image-preview",
     "google/gemini-2.5-flash-image-preview",
   ];
@@ -158,8 +158,6 @@ async function generateImage({
 
       for (const image of message.images) {
         const imageUrl = image.image_url.url;
-
-        // await writeFile(`${imageName}.txt`, imageUrl);
 
         await saveImage({
           base64: imageUrl,
