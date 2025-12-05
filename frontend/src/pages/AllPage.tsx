@@ -122,7 +122,7 @@ export function AllPage() {
       <Link to="/" style={{ marginBottom: "20px", display: "inline-block" }}>
         ← Back
       </Link>
-      <h1>All Images</h1>
+      <h1>Toutes les images</h1>
 
       <div
         style={{
@@ -175,7 +175,7 @@ export function AllPage() {
               fontWeight: "bold",
             }}
           >
-            Subject
+            Sujet
           </label>
           <select
             id="subject-filter"

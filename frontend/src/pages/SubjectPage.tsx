@@ -49,7 +49,7 @@ export function SubjectPage() {
         ← Back
       </Link>
       <h1>{matiere}</h1>
-      <h2>Subjects</h2>
+      <h2>Sujets</h2>
       <ul style={{ listStyle: "none", padding: 0 }}>
         {subjects.map((subject) => (
           <li key={subject} style={{ marginBottom: "10px" }}>

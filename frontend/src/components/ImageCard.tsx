@@ -86,7 +86,7 @@ export function ImageCard({
           </Link>
         </div>
         <div>
-          Subject:
+          Sujet:
           <Link
             to={`/matiere/${encodeURIComponent(
               matiere
@@ -98,7 +98,7 @@ export function ImageCard({
         </div>
         <div>Type: {type}</div>
         <div>
-          Model:
+          Modèle:
           <Link
             to={`/model/${encodeURIComponent(generated_by_model)}`}
             style={{ color: "#007bff", textDecoration: "underline" }}
@@ -121,7 +121,7 @@ export function ImageCard({
           cursor: deleting ? "not-allowed" : "pointer",
         }}
       >
-        {deleting ? "Deleting..." : "Delete"}
+        {deleting ? "Suppression en cours..." : "Supprimer cette image"}
       </button>
     </div>
   );
