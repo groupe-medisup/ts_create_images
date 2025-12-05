@@ -13,7 +13,7 @@ function ImageSubList({ images, deleteImage }: ImageListProps) {
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+        gridTemplateColumns: "repeat(auto-fill, minmax(400px, 1fr))",
         gap: "20px",
         marginTop: "20px",
       }}
