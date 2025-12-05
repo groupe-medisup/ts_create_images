@@ -8,7 +8,10 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "db:reset": "supabase db reset && supabase gen types typescript --local > supabase/database.types.ts",
-    "dev": "cd frontend && npm run dev"
+    "dev": "cd frontend && npm run dev",
+    "sync-schema": "export $(grep -v '^#' .env | grep PROD_SUPABASE_CONNECTION_STRING | xargs) && supabase db push --db-url \"$PROD_SUPABASE_CONNECTION_STRING\"",
+    "sync-data-and-storage": "npx tsx --env-file=.env ./scripts/sync-to-prod.ts",
+    "sync-to-prod": "npm run sync-schema && npm run sync-data-and-storage"
   },
   "author": "",
   "license": "ISC",
