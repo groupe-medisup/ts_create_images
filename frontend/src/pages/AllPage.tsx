@@ -35,7 +35,6 @@ export function AllPage() {
 
   useEffect(() => {
     async function fetchImages() {
-      console.log("Fetching all images...");
       const { data, error } = await supabase
         .from("images")
         .select("*")
