@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { ImageList, type Image } from "../components/ImageList";
 
 export function AllPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [allImages, setAllImages] = useState<Image[]>([]);
   const [filteredImages, setFilteredImages] = useState<Image[]>([]);
   const [loading, setLoading] = useState(true);
@@ -13,10 +15,18 @@ export function AllPage() {
   const [types, setTypes] = useState<string[]>([]);
   const [models, setModels] = useState<string[]>([]);
 
-  const [selectedMatiere, setSelectedMatiere] = useState<string>("");
-  const [selectedSubject, setSelectedSubject] = useState<string>("");
-  const [selectedType, setSelectedType] = useState<string>("");
-  const [selectedModel, setSelectedModel] = useState<string>("");
+  const [selectedMatiere, setSelectedMatiere] = useState<string>(
+    searchParams.get("matiere") ?? ""
+  );
+  const [selectedSubject, setSelectedSubject] = useState<string>(
+    searchParams.get("subject") ?? ""
+  );
+  const [selectedType, setSelectedType] = useState<string>(
+    searchParams.get("type") ?? ""
+  );
+  const [selectedModel, setSelectedModel] = useState<string>(
+    searchParams.get("model") ?? ""
+  );
 
   const deleteImage = (id: string) => {
     setAllImages((prev) => prev.filter((img) => img.id !== id));
@@ -82,7 +92,28 @@ export function AllPage() {
     }
 
     setFilteredImages(filtered);
-  }, [selectedMatiere, selectedSubject, selectedType, selectedModel, allImages]);
+  }, [
+    selectedMatiere,
+    selectedSubject,
+    selectedType,
+    selectedModel,
+    allImages,
+  ]);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (selectedMatiere) params.set("matiere", selectedMatiere);
+    if (selectedSubject) params.set("subject", selectedSubject);
+    if (selectedType) params.set("type", selectedType);
+    if (selectedModel) params.set("model", selectedModel);
+    setSearchParams(params, { replace: true });
+  }, [
+    selectedMatiere,
+    selectedSubject,
+    selectedType,
+    selectedModel,
+    setSearchParams,
+  ]);
 
   if (loading) return <div>Loading...</div>;
 
@@ -107,7 +138,11 @@ export function AllPage() {
         <div>
           <label
             htmlFor="matiere-filter"
-            style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}
+            style={{
+              display: "block",
+              marginBottom: "5px",
+              fontWeight: "bold",
+            }}
           >
             Matière
           </label>
@@ -134,7 +169,11 @@ export function AllPage() {
         <div>
           <label
             htmlFor="subject-filter"
-            style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}
+            style={{
+              display: "block",
+              marginBottom: "5px",
+              fontWeight: "bold",
+            }}
           >
             Subject
           </label>
@@ -161,7 +200,11 @@ export function AllPage() {
         <div>
           <label
             htmlFor="type-filter"
-            style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}
+            style={{
+              display: "block",
+              marginBottom: "5px",
+              fontWeight: "bold",
+            }}
           >
             Type
           </label>
@@ -188,7 +231,11 @@ export function AllPage() {
         <div>
           <label
             htmlFor="model-filter"
-            style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}
+            style={{
+              display: "block",
+              marginBottom: "5px",
+              fontWeight: "bold",
+            }}
           >
             Model
           </label>
