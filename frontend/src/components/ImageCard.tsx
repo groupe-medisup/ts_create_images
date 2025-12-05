@@ -31,12 +31,16 @@ export function ImageCard({
   const [deleting, setDeleting] = useState(false);
 
   const handleDelete = async () => {
-    if (!confirm("Delete this image?")) return;
+    const reason = prompt(
+      "Pourquoi cette image ne convient-elle pas ?\n(facultatif mais ça nous aide à améliorer ce service)"
+    );
+    if (reason === null) return;
 
     setDeleting(true);
 
     const { error: dbError } = await supabase.rpc("refuse_image", {
       image_id: id,
+      reason: reason,
     });
 
     if (dbError) {
